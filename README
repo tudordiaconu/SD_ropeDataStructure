@@ -1,0 +1,88 @@
+Copyright 2021 Cherciu Andrei, Diaconu Tudor-Gabriel
+
+Tema 3 SD 2021
+
+Functiile din rope.c :
+
+-makeRopeNode
+  Am alocat memoria pentru nodul din rope, am initializat copiii sai ca fiind
+  NULL, am initializat greutatea ca lungimea stringului dat ca parametru, si am
+  asignat string-ul.
+
+-makeRopeTree
+  Am alocat memoria pentru RopeTree si am asignat radacina dorita.
+
+-getLeftWeight
+  Ne-am facut o functie care calculeaza greutatea unui nod, dupa definitia
+  de pe ocw, calculand getTotalWeight pe nodul din dreapta al nodului dat ca
+  parametru.
+
+-concat
+  Am creat un nou RopeNode care urma sa fie root-ul noului RopeTree, format
+  prin concatenare, facand string-ul de pe root EMPTY. Am creat legaturile
+  intre noul nod si root-urile arborilor pe care ii concatenam, urmand sa
+  calculam greutatea noii radacini.
+
+-index
+  Ne-am creat o functie recursiva ce calculeaza caracterul de pe indexul dorit.
+  Apoi, apelam functia recursiva, primind ca argument radacina si indexul.
+
+-search
+  Ne-am folosit de functia de index in cadrul acestei functii. Ne luam un
+  string nou si adaugam in el caracterele obtinute prin apelarea functiei
+  index de la start pana la end. De asemenea, trebuia sa adaugam la finalul
+  string-ului nou si delimitatorul '\0'.
+
+-split
+  Aceasta a fost cea mai complexa functie pe care am avut-o de implementat
+  in cadrul acestei teme, dupa parerea mea. Pentru aceasta ne-am construit si
+  noi o functie recursiva care realizeaza anumite operatii pe care urmeaza sa
+  le prezentam.
+  In cadrul functiei de split principala, ne-am luat un nou RopeTree, intrucat
+  in sursa de test am observat ca ati facut mai multe split-uri consecutive
+  pe acelasi RopeTree, asa ca nu aveam voie sa-l modificam, asa ca toate
+  modificarile au fost facute pe o copie stocata in acest nou RopeTree. De
+  asemenea, ne-am alocat un vector de noduri in care stocam nodurile din
+  dreapta pe care le "taiam" din tree.
+  Astfel, in implementarea split-ului am intalnit mai multe cazuri:
+  - cel in care indexul este 0, astfel punandu-se tot tree-ul in dreapta
+  - cel in care indexul e mai mare decat lungimea string-ului stocat, in care
+    am stocat tot tree-ul in stanga
+  - al treilea, in care am apelat functia recursiva, fiind cazul general de
+    split, acesta avand mai multe subcazuri
+    -- primul subcaz este cel in care se doreste split-ul pe o frunza, in acest
+        subcaz fiind cazul in care indexul ramas va fi 0, astfel urmand ca
+        nodul cu substring-ul drept sa fie adaugat in acel array, iar daca
+        indexul este diferit de 0, ne construim 2 noduri noi in care adaugam
+        cele 2 substring-uri formate dupa split, urmand ca frunza pe care se
+        face split-ul sa devina parintele acestor 2 noduri noi, avand string-ul
+        EMPTY
+    -- al doilea subcaz este cel in care indexul este mai mic decat greutatea
+        nodului de pe care incepem split-ul; in acest caz, adaugam nodul din
+        dreapta in acel array de noduri si continuam recursiv split-ul pe
+        subarborele stang, urmand ca dupa acest split sa reactualizam greutatea
+    -- al treilea subcaz este cel in care indexul este egal cu greutatea
+        nodului de pe care incepem split-ul, comportandu-se ca in cazul
+        precedent, doar ca nu mai apelam functia recursiv pe subarborele stang
+    -- ultimul subcaz este cel in care indexul este mai mare decat greutatea
+        nodului de pe care incepem split-ul, in care apelam recursiv functia
+        pe subarborele drept, neuitand insa sa reactualizam indexul
+  Asadar, dupa efectuarea acestor operatii, vom fi nevoiti sa reconstruim
+  subarborele drept format de dupa split. In cazul in care eliminam mai mult de
+  1 nod ca urmare a split-ului, vom fi nevoiti sa facem concatenari succesive
+  intre nodurile stocate in acel array de noduri eliminate. In vederea
+  concatenarilor, vom parcurge array-ul de la coada la cap, pentru a ne da
+  subarborele drept corect.
+
+-insert
+  Functia de inserare implica un split dupa indexul dat ca parametru, crearea
+  a doua RopeTree-uri cu radacinile rezultate in urma split-ului, si
+  concatenarea acestor 2 RopeTree-uri care au rezultat.
+
+-delete
+  Functia de stergere implica 2 split-uri, unul cu indexul start, celalalt cu
+  indexul start+len. Vom construi doua RopeTree-uri, cel din stanga avand ca
+  radacina, root-ul din stanga rezultat dupa primul split, iar cel din dreapta
+  avand ca radacina root-ul din dreapta rezultat dupa al doilea split.
+  Rezultatul stergerii va fi rezultatul concatenarii celor 2 RopeTree-uri
+  formate.
